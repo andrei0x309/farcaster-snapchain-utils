@@ -1,50 +1,22 @@
-# bun-lib-template-starter - A template for creating a library with bun
+# farcaster-snapchain-utils
 
-## Getting Started
+## Description
 
-Click the [Use this template](https://github.com/andrei0x309/bun-lib-template-starter/generate) button to create a new repository with the contents starter.
+This is a library to simplify the interaction with a Farcaster snapchain node.
 
-OR
+It can be used in read-only mode or in read/write mode.
 
-Run `bun create andrei0x309/bun-lib-template-starter  ./my-lib`.
+If you use it in read/write mode, you will need to provide a private key and a FID.
 
-## Usage
+If a node is not provided, the library will use the Pinata public node.
 
-Change `lib.config.ts` to your needs.
+You can also use it with Neynar, provided you pass the NEYNAR_API_KEY to the constructor or to changeNode the method.
 
-Run `bun run build` to build the library.
+The library allows you to change the node or signer, so you don't need to create a new instance every time you want to change the node or signer.
 
-## Features
+## Full documentation
 
-- [x] Almost no dependencies.
-- [x] Generating types with rust.
-- [x] Degit command included.
-- [x] License generation command included
-- [x] Automatic version bump.
-- [x] Release command included.
-- [x] Automatic tag generation.
-- [x] Configurable by `lib.config.ts`
-- [x] Cross-OS support.
-- [x] Only uses Bun bundler to bundle the library. (note Bun bundler only supports ESM modules)
-- [x] Option to omit types declaration generation (default is false)
-- [x] Option auto fill exports in package.json (default is true)
-
-## Notes
-
-- Creating type declarations without using typescript at the moment is only possible with `isolatedDeclarations` set to `true` in tsconfig.json,
-which means all types must be declared explicitly in your code.
-
-- the folder `lib-tools` will not be included in the library, and is meant as a helper for the library creator.
-
-- ATM This template is pretty basic but works with any OS, uses only bun bundler, and only supports ESM modules, intended for modern JS, I might add more features, if you think it's missing something create an issue
-
-- All config options in `lib.config.ts` are documented in `/lib-tools/types/config-type.ts`
-
-## CHANGELOG
-
-### 2025-03-29
-  
-- Initial release
+## Quick start
 
 ## License
 

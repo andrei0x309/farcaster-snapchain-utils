@@ -1,7 +1,7 @@
 {
   "name": "farcaster-snapchain-utils",
-  "version": "1.1.3",
-  "description": "A template for creating a library with Bun, with support for TS, build config, release script, windows support, and more.",
+  "version": "1.1.4",
+  "description": "farcaster library to interact with snapchain using signers in a bun / node  environment",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -29,17 +29,17 @@
     "bun",
     "bun library",
     "bun lib",
-    "template for bun library",
-    "bun library template",
-    "typescript library"
+    "farcaster snapchain",
+    "snapchain",
+    "signers snapchain"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/andrei0x309/bun-lib-template-starter#readme",
+  "homepage": "https://github.com/andrei0x309/docs-farcaster-snapchain-utils#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andrei0x309bun-lib-template-starter.git"
+    "url": "git+https://github.com/andrei0x309/docs-farcaster-snapchain-utils.git"
   },
-  "bugs": "https://github.com/andrei0x309/bun-lib-template-starter/issues",
+  "bugs": "https://github.com/andrei0x309/docs-farcaster-snapchain-utils/issues",
   "author": "Andrei O (andrei0x309)",
   "devDependencies": {
     "@types/bun": "1.2.5",
@@ -47,5 +47,8 @@
   },
   "peerDependencies": {
     "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@farcaster/hub-nodejs": "^0.13.1"
   }
 }
