@@ -16,7 +16,7 @@ The library allows you to change the node or signer, so you don't need to create
 
 ## Full documentation
 
-Docs: [https://farcaster-snapchain-utils.zone.id/](https://farcaster-snapchain-utils.zone.id/) (Not yet available)
+Docs: [https://andrei0x309.gitbook.io/farcaster-snapchain-utils/](https://andrei0x309.gitbook.io/farcaster-snapchain-utils/)
 
 ## Quickstart
 

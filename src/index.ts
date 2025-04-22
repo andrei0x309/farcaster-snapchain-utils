@@ -24,11 +24,12 @@ import {
 const FC_TIMESTMAP_OFFSET = 1609459200
 type LinkType = 'follow'
 const NEYNAR_NODE = 'hub-grpc-api.neynar.com'
+const PINATA_NODE = 'hub-grpc.pinata.cloud'
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 class SnapChainClient {
     private PK: string = "";
-    private NODE_URL: string = "hub-grpc.pinata.cloud";
+    private NODE_URL: string = "";
     private NODE_USER: string = "";
     private NODE_PASS: string = "";
     private signer: NobleEd25519Signer = new NobleEd25519Signer(Buffer.from('0x', 'hex'));
@@ -42,7 +43,7 @@ class SnapChainClient {
         {
             PK = '',
             FID = 0,
-            NODE_URL = 'hub-grpc.pinata.cloud',
+            NODE_URL = '',
             NODE_USER = '',
             NODE_PASS = '',
             NEYNAR_API_KEY = '',
@@ -70,6 +71,8 @@ class SnapChainClient {
                 }
 
                 this.NODE_URL = NODE_URL;
+            } else {
+                this.NODE_URL = PINATA_NODE;
             }
 
             if (NODE_USER) {
@@ -84,6 +87,7 @@ class SnapChainClient {
         if (!PK || !FID) {
             this.hasAuth = false;
         } else {
+            this.hasAuth = true;
             this.PK = PK;
             this.FID = FID;
             this.signer = new NobleEd25519Signer(Buffer.from(this.PK.replace('0x', ''), 'hex'));
@@ -159,13 +163,15 @@ class SnapChainClient {
                     NODE_URL = NODE_URL.split('/')[0];
                 }
                 this.NODE_URL = NODE_URL;
+            } else {
+                this.NODE_URL = PINATA_NODE;
+            }
 
-                if (NODE_USER) {
-                    this.NODE_USER = NODE_USER;
-                }
-                if (NODE_PASS) {
-                    this.NODE_PASS = NODE_PASS;
-                }
+            if (NODE_USER) {
+                this.NODE_USER = NODE_USER;
+            }
+            if (NODE_PASS) {
+                this.NODE_PASS = NODE_PASS;
             }
         }
 
@@ -566,12 +572,17 @@ class SnapChainClient {
 
     getFidFromUsername = async (username: string): Promise<number | null> => {
         try {
+
+           
+
             const user = await this.nodeClient.getUsernameProof({
                 name: new TextEncoder().encode(username),
             })
+
             if (!user.isOk()) {
                 throw new Error(user._unsafeUnwrapErr().toString())
             }
+            
             return user._unsafeUnwrap().fid
         } catch (e) {
             console.error(`Failed to get fid from username=${username} err=${e}`)
@@ -1216,7 +1227,7 @@ class SnapChainClient {
                 throw new Error(address._unsafeUnwrapErr().toString())
             }
 
-            return address._unsafeUnwrap().messages.map((m: Message) => {
+            const verifications = address._unsafeUnwrap().messages.map((m: Message) => {
 
                 let address: string | null = Buffer.from(m.data?.verificationAddAddressBody?.address || []).toString('hex')
                 if (address.length !== 40) {
@@ -1234,6 +1245,9 @@ class SnapChainClient {
                     timestamp: (m.data?.timestamp ?? 0) * 1000 + FC_TIMESTMAP_OFFSET * 1000
                 }
             })
+
+            return verifications.filter(v => v.verificationAddress?.length > 4)
+
         } catch (e) {
             console.error(`Failed to get connected address for fid=${fid} err=${e}`)
             return null

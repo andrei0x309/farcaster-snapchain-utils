@@ -43,13 +43,14 @@ const testEnabled = {
     "testCastWithAllMediaInOneURL": false,
     "testPublicHub": false,
     "calculateFollowingsByfid": false,
-    "checkVerifiedAddr": false
+    "checkVerifiedAddr": false,
+    "getNodeInfo": false,
 }
 
 testOrSkip = testEnabled.getFidFromUsername ? test : test.skip;
-testOrSkip("Get fid By name", async () => {
-    expect(await client1.getFidFromUsername("clearwallet")).toBe(FID);
-});
+testOrSkip("Test get fid by name", async () => {
+    expect(await clientNeynar.getFidFromUsername("clearwallet")).toBe(FID);
+}, { timeout: 30000 });
 
 testOrSkip = testEnabled.createFarcasterPost ? test : test.skip;
 testOrSkip("Test send cast", async () => {
@@ -75,13 +76,13 @@ testOrSkip("Test send cast", async () => {
 
 testOrSkip = testEnabled.removeCast ? test : test.skip;
 testOrSkip("Test remove cast", async () => {
-    const hash = '69a3d03b3d90f0901ed71f4e243a5b383d7e1497'
+    const hash = 'cfff6ba4448b086be9030a91fcbe197b7dabfc32'
     const castHash = await clientNeynar.deleteCast(hash)
     expect(castHash).toBeTrue();
 }, { timeout: 20000 });
 
 testOrSkip = testEnabled.getCastsFromFid ? test : test.skip;
-testOrSkip("Get cast by FID", async () => {
+testOrSkip("Test get cast by FID", async () => {
     const FID = 1791
     const casts = await client1.getCastsByFid({
         fid: FID,
@@ -101,7 +102,7 @@ testOrSkip("Get cast by FID", async () => {
 
  
 testOrSkip = testEnabled.testChangeHub ? test : test.skip;
-testOrSkip("Test change hub", async () => {
+testOrSkip("Test change node", async () => {
 
     const oldNodeInfo = await clientNeynar.getNodeInfo();
 
@@ -189,7 +190,7 @@ testOrSkip("Test cast with all media in one URL", async () => {
 })
 
 testOrSkip = testEnabled.calculateFollowingsByfid ? test : test.skip;
-testOrSkip("Calculate followings by fid", async () => {
+testOrSkip("Test calculate followings by fid", async () => {
     const followings = await client2.getAllLinksByFid({
         fid: 1791,
         itemsPerRequests: 100,
@@ -204,8 +205,8 @@ testOrSkip("Calculate followings by fid", async () => {
 
 
 testOrSkip = testEnabled.checkVerifiedAddr ? test : test.skip;
-testOrSkip("Check last verified addresses", async () => {
-    const connectedAddresses = await client2.getConnectedAddresses({
+testOrSkip("Test check last verified addresses", async () => {
+    const connectedAddresses = await clientNeynar.getConnectedAddresses({
         fid: 1791
     })
     console.log(connectedAddresses);
@@ -213,3 +214,15 @@ testOrSkip("Check last verified addresses", async () => {
 }, {
     timeout: 20000
 })
+
+testOrSkip = testEnabled.getNodeInfo ? test : test.skip;
+testOrSkip("Test check node Info", async () => {
+    const nodeInfo = await clientNeynar.getNodeInfo()
+    console.log(clientNeynar.getCurentNode())
+    console.log(nodeInfo);
+    expect(nodeInfo).toBeDefined();
+}, {
+    timeout: 20000
+})
+
+
