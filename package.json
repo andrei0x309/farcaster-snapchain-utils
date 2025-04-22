@@ -1,6 +1,6 @@
 {
   "name": "farcaster-snapchain-utils",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "farcaster library to interact with snapchain using signers in a bun / node  environment",
   "type": "module",
   "main": "./dist/index.js",
