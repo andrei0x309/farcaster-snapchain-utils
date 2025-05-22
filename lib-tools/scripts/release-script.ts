@@ -43,7 +43,8 @@ async function main() {
 
   // 4. Create and push tag
   execSync(`git tag v${nextVersion}`);
-  execSync(`git push --follow-tags`);
+  execSync(`git push`);
+  execSync(`git push --tags --force`);
 
 }
 
