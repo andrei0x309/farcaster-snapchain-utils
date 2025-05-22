@@ -18,13 +18,14 @@ import {
     CastId,
     type FrameActionMessage,
     LinkBody,
-    type MessageData
+    type MessageData,
+    getInsecureHubRpcClient
 } from '@farcaster/hub-nodejs';
 
 const FC_TIMESTMAP_OFFSET = 1609459200
 type LinkType = 'follow'
 const NEYNAR_NODE = 'hub-grpc-api.neynar.com'
-const PINATA_NODE = 'hub-grpc.pinata.cloud'
+const HUB_MERV = 'hub.merv.fun:3383'
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 class SnapChainClient {
@@ -38,6 +39,7 @@ class SnapChainClient {
     private FID: number = 0;
     private hasAuth: boolean = false;
     private NEYNAR_API_KEY: string = "";
+    private GRPC_SSL: boolean = true;
 
     constructor(
         {
@@ -47,6 +49,7 @@ class SnapChainClient {
             NODE_USER = '',
             NODE_PASS = '',
             NEYNAR_API_KEY = '',
+            GRPC_SSL = true,
         }: {
             PK?: string,
             FID?: number,
@@ -54,12 +57,16 @@ class SnapChainClient {
             NODE_USER?: string,
             NODE_PASS?: string,
             NEYNAR_API_KEY?: string,
+            GRPC_SSL?: boolean,
         } = {}
     ) {
+
+        this.GRPC_SSL = GRPC_SSL;
 
         if (NEYNAR_API_KEY) {
             this.NEYNAR_API_KEY = NEYNAR_API_KEY;
             this.NODE_URL = NEYNAR_NODE;
+            this.GRPC_SSL = true;
         } else {
             if (NODE_URL) {
                 if (NODE_URL.includes('//')) {
@@ -72,7 +79,7 @@ class SnapChainClient {
 
                 this.NODE_URL = NODE_URL;
             } else {
-                this.NODE_URL = PINATA_NODE;
+                this.NODE_URL = HUB_MERV;
             }
 
             if (NODE_USER) {
@@ -103,8 +110,11 @@ class SnapChainClient {
                 createDefaultMetadataKeyInterceptor('x-api-key', NEYNAR_API_KEY),
             ]
         }
-
-        this.nodeClient = getSSLHubRpcClient(this.NODE_URL, rcpOptions)
+        if (this.GRPC_SSL && !this.NODE_URL.includes(HUB_MERV)) {
+            this.nodeClient = getSSLHubRpcClient(this.NODE_URL, rcpOptions)
+        } else {
+            this.nodeClient = getInsecureHubRpcClient(this.NODE_URL, rcpOptions)
+        }
         this.nodeClientAuthMetadata = getAuthMetadata(this.NODE_USER, this.NODE_PASS)
     }
 
@@ -142,18 +152,24 @@ class SnapChainClient {
         NODE_USER,
         NODE_PASS,
         NEYNAR_API_KEY,
+        GRPC_SSL,
     }: {
         NODE_URL?: string,
         NODE_USER?: string,
         NODE_PASS?: string,
         NEYNAR_API_KEY?: string,
+        GRPC_SSL?: boolean,
     }): void => {
+
+        this.GRPC_SSL = GRPC_SSL ?? this.GRPC_SSL;
+
         if (!NODE_URL || !NEYNAR_API_KEY) {
             throw new Error('changeNode: either NODE_URL or NEYNAR_API_KEY needs to be provided')
         }
         if (NEYNAR_API_KEY) {
             this.NEYNAR_API_KEY = NEYNAR_API_KEY;
             this.NODE_URL = NEYNAR_NODE;
+            this.GRPC_SSL = true;
         } else {
             if (NODE_URL) {
                 if (NODE_URL.includes('//')) {
@@ -164,7 +180,7 @@ class SnapChainClient {
                 }
                 this.NODE_URL = NODE_URL;
             } else {
-                this.NODE_URL = PINATA_NODE;
+                this.NODE_URL = HUB_MERV;
             }
 
             if (NODE_USER) {
@@ -186,7 +202,11 @@ class SnapChainClient {
             ]
         }
 
-        this.nodeClient = getSSLHubRpcClient(this.NODE_URL, rcpOptions)
+        if (this.GRPC_SSL && !this.NODE_URL.includes(HUB_MERV)) {
+            this.nodeClient = getSSLHubRpcClient(this.NODE_URL, rcpOptions)
+        } else {
+            this.nodeClient = getInsecureHubRpcClient(this.NODE_URL, rcpOptions)
+        }
 
         this.nodeClientAuthMetadata = getAuthMetadata(this.NODE_USER, this.NODE_PASS)
     }

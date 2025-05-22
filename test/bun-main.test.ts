@@ -12,12 +12,12 @@ const NODE_URL = process.env.NODE_URL;
 const client1 = new SnapChainClient({
     FID: FID,
     PK: SIGNER_KEY,
-}); // default hub-grpc.pinata.cloud
+}); // default hub.merv.fun
 
 const client2 = new SnapChainClient({
     FID: FID2,
     PK: SIGNER_KEY2,
-    NODE_URL: 'hub-grpc.pinata.cloud',
+    NODE_URL: 'hub.merv.fun:3383',
     NODE_USER: '',
     NODE_PASS: '',
 }) // simulate an own node client
@@ -44,8 +44,11 @@ const testEnabled = {
     "testPublicHub": false,
     "calculateFollowingsByfid": false,
     "checkVerifiedAddr": false,
-    "getNodeInfo": false,
+    "getNeynarNodeInfo": false,
+    "getMervNodeInfo": true
 }
+
+let globalCastHash: string;
 
 testOrSkip = testEnabled.getFidFromUsername ? test : test.skip;
 testOrSkip("Test get fid by name", async () => {
@@ -58,9 +61,8 @@ testOrSkip("Test send cast", async () => {
     const castHash = await clientNeynar.createFarcasterPost({
         content: text
     });
-    const stringHash = Buffer.from(castHash).toString('hex');
-    console.log(castHash);
-    expect(stringHash).toBeDefined();
+    globalCastHash = castHash;
+    expect(castHash).toBeDefined();
 });
 
 testOrSkip = testEnabled.createCast ? test : test.skip;
@@ -69,14 +71,17 @@ testOrSkip("Test send cast", async () => {
     const castHash = await clientNeynar.createCast({
         content: text
     })
-    const stringHash = Buffer.from(castHash).toString('hex');
-    console.log(castHash);
-    expect(stringHash).toBeDefined();
+    globalCastHash = castHash;
+    expect(castHash).toBeDefined();
 }, { timeout: 30000 });
 
 testOrSkip = testEnabled.removeCast ? test : test.skip;
 testOrSkip("Test remove cast", async () => {
-    const hash = 'cfff6ba4448b086be9030a91fcbe197b7dabfc32'
+    if(globalCastHash) {
+        await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+
+    const hash = globalCastHash ?? 'cfff6ba4448b086be9030a91fcbe197b7dabfc32'
     const castHash = await clientNeynar.deleteCast(hash)
     expect(castHash).toBeTrue();
 }, { timeout: 20000 });
@@ -215,8 +220,8 @@ testOrSkip("Test check last verified addresses", async () => {
     timeout: 20000
 })
 
-testOrSkip = testEnabled.getNodeInfo ? test : test.skip;
-testOrSkip("Test check node Info", async () => {
+testOrSkip = testEnabled.getNeynarNodeInfo ? test : test.skip;
+testOrSkip("Test check Neynar node info", async () => {
     const nodeInfo = await clientNeynar.getNodeInfo()
     console.log(clientNeynar.getCurentNode())
     console.log(nodeInfo);
@@ -224,5 +229,18 @@ testOrSkip("Test check node Info", async () => {
 }, {
     timeout: 20000
 })
+
+testOrSkip = testEnabled.getMervNodeInfo ? test : test.skip;
+testOrSkip("Test check Merv node info", async () => {
+    const nodeInfo = await client1.getNodeInfo()
+    console.log(client1.getCurentNode())
+    console.log(nodeInfo);
+    expect(nodeInfo).toBeDefined();
+}, {
+    timeout: 20000
+})
+
+
+
 
 
